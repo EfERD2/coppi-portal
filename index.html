@@ -2,543 +2,285 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>COPPI - Portal de Obras</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Urbanist:wght@700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal COPPI - Engenharia Estrutural</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* BASE DE DESIGN E PALETA DO PORTAL */
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; min-height: 100vh; overflow-x: hidden; }
-
-        /* ====== TELA DE LOGIN ACCESSIBLE ====== */
-        .login-wrapper { width: 100%; max-width: 400px; padding: 20px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; margin: 0 auto; }
-        .login-container { background: #1e293b; padding: 40px 30px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid #334155; width: 100%; }
-        .login-container h1 { font-family: 'Urbanist', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 5px; color: #fff; text-align: center; letter-spacing: -1px; }
-        .login-container h1 span { color: #3b82f6; }
-        .login-container p { color: #94a3b8; font-size: 14px; margin-bottom: 35px; text-align: center; }
-        .input-group { text-align: left; margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px; letter-spacing: 0.5px; }
-        .input-group input { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 16px; transition: border-color 0.2s; }
-        .input-group input:focus { border-color: #3b82f6; outline: none; }
-        .btn-login { width: 100%; padding: 16px; background: #3b82f6; border: none; border-radius: 6px; color: #fff; font-weight: 700; font-size: 16px; cursor: pointer; transition: background 0.2s; display: block; text-align: center; -webkit-appearance: none; }
-        .btn-login:active { background: #1d4ed8; }
-        .login-error { color: #ef4444; font-size: 13px; margin-top: 15px; text-align: center; display: none; font-weight: 600; }
-
-        /* ====== LAYOUT ESTRUTURAL (DESKTOP COM MENU LATERAL) ====== */
-        .app-container { display: none; min-height: 100vh; flex-direction: row; background: #f8fafc; color: #334155; }
-        
-        /* Menu Lateral (Desktop) */
-        .sidebar { width: 260px; background: #0f172a; color: #fff; display: flex; flex-direction: column; border-right: 1px solid #1e293b; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: sticky; top: 0; height: 100vh; z-index: 110; }
-        .sidebar.collapsed { width: 70px; }
-        .sidebar-brand { padding: 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; overflow: hidden; white-space: nowrap; }
-        .sidebar-brand .logo { font-family: 'Urbanist', sans-serif; font-weight: 900; font-size: 26px; }
-        .sidebar-brand .logo span { color: #3b82f6; }
-        
-        /* Botão Hambúrguer Inteligente */
-        .btn-toggle-sidebar { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 5px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-        .btn-toggle-sidebar:hover { background: #1e293b; color: #fff; }
-
-        .sidebar-menu { display: flex; flex-direction: column; gap: 5px; padding: 15px 10px; flex-grow: 1; }
-        .nav-btn { display: flex; align-items: center; gap: 15px; padding: 14px 15px; border: none; background: none; color: #94a3b8; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 6px; text-align: left; width: 100%; transition: all 0.2s; white-space: nowrap; }
-        .nav-btn:hover { background: #1e293b; color: #fff; }
-        .nav-btn.active { background: #3b82f6; color: #fff; }
-        .nav-btn .icon { font-size: 18px; min-width: 24px; text-align: center; }
-        
-        .sidebar.collapsed .nav-text, .sidebar.collapsed .logo { display: none; }
-        .sidebar.collapsed .nav-btn { justify-content: center; padding: 14px 0; }
-
-        /* Área de Conteúdo Principal */
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
-        
-        /* Topbar Desktop */
-        .topbar-desktop { background: #fff; height: 70px; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid #e2e8f0; }
-        .topbar-desktop .client-status { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: #1e293b; }
-        
-        /* Indicador Online Regulamentar */
-        .online-dot { width: 9px; height: 9px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2); animation: pulseDot 2s infinite; }
-        @keyframes pulseDot { 0% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.4); } 100% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); } }
-        
-        .btn-logout { background: #fef2f2; border: 1px solid #fee2e2; color: #ef4444; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; text-transform: uppercase; transition: all 0.2s; }
-        .btn-logout:hover { background: #ef4444; color: #fff; }
-
-        /* ====== ELEMENTOS DE INTERFACE EM COMUM ====== */
-        .app-body { max-width: 1100px; width: 100%; margin: 0 auto; padding: 25px; flex-grow: 1; }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* SISTEMA DE STORIES (VÍNCULO DE 24 HORAS) */
-        .stories-wrapper { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 10px; }
-        .stories-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px; }
-        .stories-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
-        .story-circle { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; min-width: 75px; text-align: center; }
-        .story-img-frame { width: 60px; height: 60px; border-radius: 50%; padding: 3px; background: linear-gradient(45deg, #f59e0b, #3b82f6); display: flex; align-items: center; justify-content: center; }
-        .story-img-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid #fff; }
-        .story-circle span { font-size: 11px; font-weight: 600; color: #475569; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        /* CARDS GERAIS DO PORTAL */
-        .card { background: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01); }
-        .card h3 { font-family: 'Urbanist', sans-serif; font-size: 20px; margin-bottom: 18px; color: #0f172a; border-left: 4px solid #3b82f6; padding-left: 12px; text-transform: uppercase; letter-spacing: -0.5px; }
-        
-        /* COMPONENTE INTERATIVO: OLHO DO VALOR CONTRATUAL */
-        .price-display-wrapper { background: #0f172a; color: #fff; text-align: center; padding: 35px 20px; border-radius: 10px; margin-bottom: 25px; position: relative; overflow: hidden; }
-        .price-display-wrapper h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 8px; }
-        .price-row { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 5px; }
-        .price-value { font-size: 40px; font-weight: 800; font-family: 'Urbanist', sans-serif; color: #3b82f6; letter-spacing: -1px; transition: all 0.2s; min-width: 240px; }
-        .btn-toggle-price { background: #1e293b; border: 1px solid #334155; color: #3b82f6; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; }
-        .btn-toggle-price:hover { background: #3b82f6; color: #fff; }
-
-        /* CORREÇÃO DA GALERIA: SEQUENCIA DE FOTOS ORGANIZADA */
-        .photo-sequence-grid { display: flex; flex-direction: column; gap: 20px; }
-        .photo-item-row { display: flex; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: transform 0.2s; }
-        .photo-item-row:hover { transform: translateY(-2px); }
-        .photo-thumb-box { width: 220px; min-width: 220px; height: 160px; background: #cbd5e1; cursor: pointer; position: relative; overflow: hidden; }
-        
-        /* Tratamento dinâmico contra achatamento das fotos */
-        .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-        .photo-thumb-box:hover img { transform: scale(1.05); }
-        .photo-badge { position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.85); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; z-index: 5; }
-        .photo-info-pane { padding: 20px; display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
-        .photo-info-pane h4 { font-family: 'Urbanist', sans-serif; font-size: 16px; color: #0f172a; margin-bottom: 8px; text-transform: uppercase; }
-        .photo-info-pane p { font-size: 13.5px; color: #475569; line-height: 1.5; }
-
-        /* VIGAS GRID COM AJUSTE DE IMAGEM */
-        .vigas-horizontal-scroll { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; }
-        .viga-card-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; text-align: center; }
-        .viga-img-wrap { height: 120px; background: #cbd5e1; border-radius: 6px; overflow: hidden; cursor: pointer; margin-bottom: 8px; }
-        .viga-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* MODAL DE VISUALIZAÇÃO INTERATIVA (LIGHTBOX) */
-        .photo-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.95); z-index: 200; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease; padding: 20px; }
-        .photo-modal-overlay.active { display: flex; opacity: 1; }
-        .modal-view-container { max-width: 900px; width: 100%; position: relative; display: flex; flex-direction: column; align-items: center; }
-        .modal-view-container img { max-height: 75vh; max-width: 100%; object-fit: contain; border-radius: 6px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        .modal-caption { color: #fff; margin-top: 15px; font-size: 15px; text-align: center; font-weight: 500; max-width: 600px; line-height: 1.4; }
-        .btn-close-modal { position: absolute; top: -45px; right: 0; background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; font-weight: 300; }
-
-        /* SISTEMA OPT-IN DE NOTIFICAÇÕES (OPÇÃO DO USUÁRIO) */
-        .notification-optin-box { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; padding: 30px; border-radius: 10px; margin-top: 30px; border: 1px solid #334155; }
-        .optin-header h4 { font-family: 'Urbanist', sans-serif; font-size: 18px; color: #fff; margin-bottom: 5px; }
-        .optin-header p { font-size: 13px; color: #94a3b8; margin-bottom: 18px; }
-        .optin-form-row { display: flex; gap: 10px; max-width: 500px; }
-        .optin-form-row input { flex-grow: 1; padding: 12px 15px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px; }
-        .optin-form-row button { padding: 12px 20px; background: #3b82f6; border: none; border-radius: 6px; color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s; }
-        .optin-form-row button:hover { background: #1d4ed8; }
-        .optin-success { color: #22c55e; font-size: 13px; margin-top: 10px; font-weight: 600; display: none; }
-
-        /* COMPONENTES DE EXECUÇÃO / TABELAS */
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .tech-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .tech-table th { background: #0f172a; color: #ffffff; padding: 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .tech-table td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; color: #475569; }
-        .tech-table tr:nth-child(even) td { background: #f8fafc; }
-        .tech-table .total-row td { background: #e2e8f0!important; font-weight: 700; color: #0f172a; border-top: 2px solid #0f172a; }
-        
-        .status-badge { display: inline-block; padding: 5px 12px; background: #fef3c7; color: #d97706; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
-        .info-box { background: #f8fafc; border-left: 4px solid #0f172a; padding: 15px; margin-bottom: 15px; border-radius: 0 6px 6px 0; font-size: 13.5px; line-height: 1.5; color: #475569; }
-        .alert-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; border-radius: 0 6px 6px 0; color: #991b1b; font-size: 13.5px; line-height: 1.5; }
-        ul { padding-left: 20px; margin-bottom: 10px; }
-        li { font-size: 13.5px; color: #475569; line-height: 1.5; margin-bottom: 6px; }
-
-        /* INTERFACE EXCLUSIVA MOBILE DE CABEÇALHO/RODAPÉ */
-        .mobile-header-bar { display: none; background: #0f172a; color: #fff; padding: 15px; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 120; border-bottom: 2px solid #1e293b; }
-        .mobile-header-bar .left-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #94a3b8; }
-        .mobile-header-bar .company-right { font-family: 'Urbanist', sans-serif; font-weight: 900; font-size: 22px; color: #fff; }
-        .mobile-header-bar .company-right span { color: #3b82f6; }
-        .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; border-top: 1px solid #cbd5e1; z-index: 130; height: 65px; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); }
-        .mobile-tab-btn { background: none; border: none; color: #64748b; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex-grow: 1; height: 100%; justify-content: center; text-transform: uppercase; }
-        .mobile-tab-btn.active { color: #3b82f6; }
-        .mobile-tab-btn .mob-icon { font-size: 18px; font-weight: 800; }
-
-        /* ====== RESPONSIVIDADE CRÍTICA (MOBILE OVERRIDES) ====== */
-        @media (max-width: 768px) {
-            .sidebar, .topbar-desktop { display: none !important; }
-            .mobile-header-bar { display: flex; }
-            .mobile-bottom-nav { display: flex; }
-            .app-container { flex-direction: column; padding-bottom: 75px; }
-            .app-body { padding: 15px 12px; }
-            
-            .photo-item-row { flex-direction: column; }
-            .photo-thumb-box { width: 100%; height: 180px; }
-            .vigas-horizontal-scroll { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .price-value { font-size: 32px; min-width: 180px; }
-            
-            .optin-form-row { flex-direction: column; }
-            .optin-form-row button { width: 100%; }
+        :root {
+            --primary: #1e293b;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-yellow: #eab308;
+            --text-dark: #0f172a;
+            --bg-light: #f8fafc;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); padding: 15px; }
+        
+        /* Tela de Login */
+        .login-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 90vh; padding: 20px; }
+        .login-card { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 360px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .login-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; text-align: center; color: var(--primary); }
+        .login-card p { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; }
+        .login-field { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+
+        /* Conteúdo Principal (Oculto antes do login) */
+        .app-content { display: none; }
+
+        .header { background: var(--primary); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; position: relative; }
+        .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .header p { font-size: 13px; color: #94a3b8; margin-top: 5px; }
+        .logout-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+
+        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #64748b; margin: 25px 0 12px 5px; letter-spacing: 0.5px; }
+
+        .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .card-img { width: 100%; height: 180px; border-radius: 8px; object-fit: cover; margin-bottom: 12px; background-color: #e2e8f0; }
+        .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .card p { font-size: 13px; color: #64748b; line-height: 1.4; }
+
+        /* Proposta e Negociação */
+        .proposal-value { font-size: 28px; font-weight: 700; color: var(--primary); margin: 10px 0; display: block; }
+        
+        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 15px; }
+        .status-pendente { background: #fef9c3; color: #713f12; }
+        .status-aceito { background: #dcfce7; color: #14532d; }
+        .status-recusado { background: #fee2e2; color: #7f1d1d; }
+        .status-contraproposta { background: #ffedd5; color: #7c2d12; }
+
+        .btn-group { display: none; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        
+        .btn-green { background: var(--accent-green); }
+        .btn-green:hover { background: #16a34a; }
+        .btn-red { background: var(--accent-red); }
+        .btn-red:hover { background: #dc2626; }
+        .btn-yellow { background: var(--accent-yellow); color: #451a03; }
+        .btn-yellow:hover { background: #ca8a04; }
+        .btn-primary { background: var(--primary); }
+
+        .negotiation-box { display: none; margin-top: 15px; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; }
+        .negotiation-box textarea, .negotiation-box input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+
+        /* Painel Exclusivo da Empresa (Admin) */
+        .admin-zone { display: none; background: #f8fafc; border: 2px dashed #cbd5e1; padding: 15px; border-radius: 12px; margin-top: 25px; }
+        .admin-title { font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .badge-role { background: #cbd5e1; color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="login-wrapper" id="loginBlock">
-        <div class="login-container">
-            <h1>COPPI<span>.</span></h1>
-            <p>Portal de Obras e Histórico Técnico</p>
-            
-            <form id="formLoginMobile" action="#" onsubmit="return false;">
-                <div class="input-group">
-                    <label>Código de Acesso da Obra</label>
-                    <input type="text" id="codigoObra" value="CO-2026" autocomplete="off" autocapitalize="none">
-                </div>
-                <div class="input-group">
-                    <label>Senha do Condomínio</label>
-                    <input type="password" id="senhaObra" value="123456">
-                </div>
-                <button type="submit" class="btn-login" id="btnLoginAction">Acessar Painel</button>
-            </form>
-            <div class="login-error" id="loginError">Código ou senha incorretos.</div>
+    <div class="login-screen" id="login-block">
+        <div class="login-card">
+            <h2>Portal COPPI</h2>
+            <p>Insira suas credenciais de acesso</p>
+            <input type="text" id="user-input" class="login-field" placeholder="Usuário">
+            <input type="password" id="pass-input" class="login-field" placeholder="Senha">
+            <button class="btn btn-primary" onclick="executarLogin()">Acessar Painel</button>
         </div>
     </div>
 
-    <div class="app-container" id="appBlock">
-        
-        <aside class="sidebar" id="sidebarEl">
-            <div class="sidebar-brand">
-                <div class="logo">COPPI<span>.</span></div>
-                <button class="btn-toggle-sidebar" id="btnToggleSidebar" title="Recolher Menu">☰</button>
-            </div>
-            <nav class="sidebar-menu">
-                <button class="nav-btn active" data-target="feed"><span class="icon">🏠</span><span class="nav-text">Feed da Obra</span></button>
-                <button class="nav-btn" data-target="resumo"><span class="icon">📊</span><span class="nav-text">Resumo Técnico</span></button>
-                <button class="nav-btn" data-target="escopo"><span class="icon">🛠️</span><span class="nav-text">Metodologia</span></button>
-                <button class="nav-btn" data-target="valores"><span class="icon">💰</span><span class="nav-text">Proposta Comercial</span></button>
-                <button class="nav-btn" data-target="galeria"><span class="icon">📸</span><span class="nav-text">Fotos Mapeadas</span></button>
-            </nav>
-        </aside>
-
-        <div class="main-content">
-            
-            <header class="topbar-desktop">
-                <div class="client-status">
-                    <span class="online-dot"></span>
-                    <span>Condomínio Ativo (Online)</span>
-                </div>
-                <button class="btn-logout" class="btnLogoutAction">Sair</button>
-            </header>
-
-            <div class="mobile-header-bar">
-                <div class="left-meta">
-                    <span class="online-dot"></span>
-                    <span>Ativo</span>
-                    <span style="color:#ef4444; margin-left: 8px; font-weight:700;" class="btnLogoutAction">SAIR</span>
-                </div>
-                <div class="company-right">COPPI<span>.</span></div>
-            </div>
-
-            <main class="app-body">
-
-                <div class="stories-wrapper">
-                    <div class="stories-title">Acompanhamento Técnico (Últimas 24h)</div>
-                    <div class="stories-container">
-                        <div class="story-circle" onclick="abrirStory('F-05 - Preparação da Fachada', 'img/fundodeviga.jpeg')">
-                            <div class="story-img-frame"><img src="img/fundodeviga.jpeg"></div>
-                            <span>Fachada</span>
-                        </div>
-                        <div class="story-circle" onclick="abrirStory('F-06 - Segurança de Andaimes', 'img/fachadaexternaacessoandaime.jpeg')">
-                            <div class="story-img-frame"><img src="img/fachadaexternaacessoandaime.jpeg"></div>
-                            <span>Andaimes</span>
-                        </div>
-                        <div class="story-circle" onclick="abrirStory('F-07 - Grauteamento de Pilar A', 'img/pilarA.jpeg')">
-                            <div class="story-img-frame"><img src="img/pilarA.jpeg"></div>
-                            <span>Pilar A</span>
-                        </div>
-                        <div class="story-circle" onclick="abrirStory('F-11 - Escavação do Dreno', 'img/tirardrenorua.jpeg')">
-                            <div class="story-img-frame"><img src="img/tirardrenorua.jpeg"></div>
-                            <span>Dreno</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="feed" class="tab-panel active">
-                    <div class="card">
-                        <h3>Evolução Diária e Status</h3>
-                        <p style="margin-bottom: 15px;">Bem-vindo ao diário de bordo técnico da Engenharia. Abaixo constam as atualizações em tempo real do andamento das frentes de serviço.</p>
-                        
-                        <div class="info-box" style="border-left-color: #22c55e;">
-                            <strong>Status da Fase 01:</strong> Mobilização de canteiro concluída. Início da decapagem mecânica da Fachada Térrea Principal em andamento. Nível de execução geral: <strong>12% planeado</strong>.
-                        </div>
-                    </div>
-
-                    <div class="notification-optin-box">
-                        <div class="optin-header">
-                            <h4>Deseja receber notificações por e-mail?</h4>
-                            <p>Esta etapa é inteiramente opcional. Cadastre seu e-mail abaixo para receber relatórios consolidados e alertas de engenharia diretamente na sua caixa de entrada.</p>
-                        </div>
-                        <div class="optin-form-row">
-                            <input type="email" id="userEmailOptIn" placeholder="seu-email@dominio.com">
-                            <button type="button" onclick="salvarOptIn()">Ativar Alertas</button>
-                        </div>
-                        <div class="optin-success" id="optInAlert">E-mail cadastrado com sucesso! Enviaremos atualizações conforme a evolução.</div>
-                    </div>
-                </div>
-
-                <div id="resumo" class="tab-panel">
-                    <div class="card">
-                        <h3>Quadro de Cubagem e Metragens</h3>
-                        <p style="margin-bottom: 15px;">Levantamento quantitativo estruturado com o multiplicador de esforço operacional (x2).</p>
-                        
-                        <div class="table-responsive">
-                            <table class="tech-table">
-                                <thead>
-                                    <tr>
-                                        <th>Elemento</th>
-                                        <th>Medida Base</th>
-                                        <th>Fator</th>
-                                        <th>Total Final</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Parede Principal Térrea (Fachada)</td><td>45,00 m²</td><td>x2</td><td>90,00 m²</td></tr>
-                                    <tr><td>Parede Interna A</td><td>4,32 m²</td><td>x2</td><td>8,64 m²</td></tr>
-                                    <tr><td>Parede Interna B</td><td>4,32 m²</td><td>x2</td><td>8,64 m²</td></tr>
-                                    <tr><td>Parede Externa (Quadra)</td><td>9,00 m²</td><td>x2</td><td>18,00 m²</td></tr>
-                                    <tr class="total-row"><td>Volume Reboco/Alvenarias</td><td colspan="2">-</td><td>125,28 m²</td></tr>
-                                    
-                                    <tr><td>Pilares Estruturais (A + B)</td><td>4,95 m</td><td>Linear</td><td>4,95 m</td></tr>
-                                    <tr><td>Requadro de Portões</td><td>8,14 m</td><td>Linear</td><td>8,14 m</td></tr>
-                                    <tr><td>Vigas Internas (C, D, E, F)</td><td>11,80 m</td><td>Linear</td><td>11,80 m</td></tr>
-                                    <tr class="total-row"><td>Volume Estrutural Linear</td><td colspan="2">-</td><td>24,89 m</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="escopo" class="tab-panel">
-                    <div class="card">
-                        <h3>Metodologia Normativa (ABNT NBR 7200 / 13749)</h3>
-                        <div class="info-box"><strong>Fase Civil 1:</strong> Isolamento do perímetro com lonas de alta densidade e proteção rígida da calçada existente contra quebras por queda de material.</div>
-                        <div class="info-box"><strong>Fase Civil 2:</strong> Remoção profunda do reboco comprometido, aplicação de impermeabilizante mineral de base até 50cm, seguido por chapisco industrial e novo reboco.</div>
-                        <div class="info-box"><strong>Fase Civil 3:</strong> Escovação mecânica de armaduras oxidadas, zarcão protetivo e recomposição volumétrica com Graute Estrutural de alta resistência.</div>
-                    </div>
-                </div>
-
-                <div id="valores" class="tab-panel">
-                    <div class="price-display-wrapper">
-                        <h4>Investimento Global da Obra</h4>
-                        <div class="price-row">
-                            <div class="price-value" id="orcamentoTexto">R$ ••••••••••</div>
-                            <button type="button" class="btn-toggle-price" id="btnToggleValue" onclick="toggleOrcamento()" title="Mostrar/Ocultar Valor">👁️</button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <h3>Critérios Contratuais</h3>
-                        <ul>
-                            <li><strong>Inclusões:</strong> Equipe dedicada de campo (Oficial + Ajudante), encargos civis e trabalhistas inclusos, montagem de andaimes e proteções perimetrais.</li>
-                            <li><strong>Exclusões:</strong> Compra física de materiais pesados e contratação de caçambas de entulho (responsabilidade direta do condomínio).</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div id="galeria" class="tab-panel">
-                    <div class="card">
-                        <h3>Galeria Mapeada (Clique na Imagem para Ampliar)</h3>
-                        <p style="margin-bottom: 20px;">Lista sequencial dos pontos capturados que passarão pelo tratamento metodológico da engenharia.</p>
-                        
-                        <div class="photo-sequence-grid">
-                            <div class="photo-item-row">
-                                <div class="photo-thumb-box" onclick="abrirLightbox('F-05 - Parede Principal Térrea (Fachada)', 'img/fundodeviga.jpeg')">
-                                    <span class="photo-badge">F-05</span>
-                                    <img src="img/fundodeviga.jpeg">
-                                </div>
-                                <div class="photo-info-pane">
-                                    <h4>Parede Principal Térrea (Fachada)</h4>
-                                    <p>Área de 15x3m totalizando 90,00 m². Plano vertical completo necessitando decapagem profunda de argamassa e correção da linha hidrófuga de base.</p>
-                                </div>
-                            </div>
-
-                            <div class="photo-item-row">
-                                <div class="photo-thumb-box" onclick="abrirLightbox('F-06 - Setor Alto e Acesso ao Andaime', 'img/fachadaexternaacessoandaime.jpeg')">
-                                    <span class="photo-badge">F-06</span>
-                                    <img src="img/fachadaexternaacessoandaime.jpeg">
-                                </div>
-                                <div class="photo-info-pane">
-                                    <h4>Setor Alto / Viga de Transição</h4>
-                                    <p>Ponto de montagem técnica para torre de andaime com amarração perimetral e sapatas de amortecimento de impacto em calçada.</p>
-                                </div>
-                            </div>
-
-                            <div class="photo-item-row">
-                                <div class="photo-thumb-box" onclick="abrirLightbox('F-07 (A) - Pilar Estrutural A', 'img/pilarA.jpeg')">
-                                    <span class="photo-badge">F-07 (A)</span>
-                                    <img src="img/pilarA.jpeg">
-                                </div>
-                                <div class="photo-info-pane">
-                                    <h4>Pilar Estrutural A</h4>
-                                    <p>Extensão linear de 2,20 metros. Identificado destacamento de quina viva com ferragem exposta sob ação de oxidação moderada.</p>
-                                </div>
-                            </div>
-
-                            <div class="photo-item-row">
-                                <div class="photo-thumb-box" onclick="abrirLightbox('F-07 (B) - Pilar Interno B', 'img/pilarinternoB.jpeg')">
-                                    <span class="photo-badge">F-07 (B)</span>
-                                    <img src="img/pilarinternoB.jpeg">
-                                </div>
-                                <div class="photo-info-pane">
-                                    <h4>Pilar Interno B</h4>
-                                    <p>Extensão linear de 2,75 metros. Ponto de recomposição estrutural direta com polímeros grauteados de alto prumo.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h4 style="margin: 30px 0 10px 0; font-family:'Urbanist'; text-transform:uppercase;">Complexo de Vigas Internas (Mapeamento F-10)</h4>
-                        <div class="vigas-horizontal-scroll">
-                            <div class="viga-card-box">
-                                <div class="viga-img-wrap" onclick="abrirLightbox('Viga Interna C - 1,00m linear', 'img/vigainternaC.jpeg')">
-                                    <img src="img/vigainternaC.jpeg">
-                                </div>
-                                <span style="font-size:12px; font-weight:700;">Viga C (1,00m)</span>
-                            </div>
-                            <div class="viga-card-box">
-                                <div class="viga-img-wrap" onclick="abrirLightbox('Viga Interna D - 3,80m linear', 'img/vigainternaD.jpeg')">
-                                    <img src="img/vigainternaD.jpeg">
-                                </div>
-                                <span style="font-size:12px; font-weight:700;">Viga D (3,80m)</span>
-                            </div>
-                            <div class="viga-card-box">
-                                <div class="viga-img-wrap" onclick="abrirLightbox('Viga Interna E - 1,00m linear', 'img/vigainternaE.jpeg')">
-                                    <img src="img/vigainternaE.jpeg">
-                                </div>
-                                <span style="font-size:12px; font-weight:700;">Viga E (1,00m)</span>
-                            </div>
-                            <div class="viga-card-box">
-                                <div class="viga-img-wrap" onclick="abrirLightbox('Viga Interna F - 6,00m linear', 'img/vigainternaF.jpeg')">
-                                    <img src="img/vigainternaF.jpeg">
-                                </div>
-                                <span style="font-size:12px; font-weight:700;">Viga F (6,00m)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </main>
+    <div class="app-content" id="app-block">
+        <div class="header">
+            <button class="logout-btn" onclick="executarLogout()">Sair</button>
+            <h1 id="main-title">Portal COPPI</h1>
+            <p>Acompanhamento Técnico & Proposta Estrutural</p>
         </div>
 
-        <nav class="mobile-bottom-nav">
-            <button class="mobile-tab-btn active" data-target="feed"><span class="mob-icon">🏠</span><span>Feed</span></button>
-            <button class="mobile-tab-btn" data-target="resumo"><span class="mob-icon">📊</span><span>Resumo</span></button>
-            <button class="mobile-tab-btn" data-target="escopo"><span class="mob-icon">🛠️</span><span>Escopo</span></button>
-            <button class="mobile-tab-btn" data-target="valores"><span class="mob-icon">💰</span><span>Valores</span></button>
-            <button class="mobile-tab-btn" data-target="galeria"><span class="mob-icon">📸</span><span>Fotos</span></button>
-        </nav>
-    </div>
+        <div class="section-title">Evidências Técnicas (Fotos da Obra)</div>
 
-    <div class="photo-modal-overlay" id="globalLightbox" onclick="fecharLightbox()">
-        <div class="modal-view-container" onclick="event.stopPropagation()">
-            <button class="btn-close-modal" onclick="fecharLightbox()">×</button>
-            <img id="lightboxTargetImg" src="" alt="Imagem Ampliada">
-            <div class="modal-caption" id="lightboxTargetCaption">Legenda da Imagem Técnica</div>
+        <div class="card">
+            <img class="card-img" src="img/pilarinternoB.jpeg" alt="Pilar Interno B">
+            <h3>Pilar Interno B</h3>
+            <p>Extensão linear de 2,75 metros. Ponto de recomposição estrutural direta com polímeros grauteados de alto prumo.</p>
+        </div>
+
+        <div class="card">
+            <img class="card-img" src="img/vigainternaD.jpeg" alt="Viga Interna D">
+            <h3>Viga Interna D (3,80m)</h3>
+            <p>Mapeamento F-10. Detalhe técnico de cura e escoramento concluídos.</p>
+        </div>
+
+        <div class="section-title">Valores & Proposta Comercial</div>
+        <div class="card">
+            <h3>Resumo Financeiro do Projeto</h3>
+            <p>Investimento total estimado para execução técnica, insumos e engenharia dedicada:</p>
+            
+            <span class="proposal-value" id="display-value">R$ 0,00</span>
+            
+            <div id="status-container">
+                <span class="status-badge status-pendente" id="display-status">Aguardando Análise do Cliente</span>
+            </div>
+
+            <div class="btn-group" id="client-actions">
+                <button class="btn btn-green" onclick="responderProposta('Aceito')">✓ Concordo</button>
+                <button class="btn btn-red" onclick="responderProposta('Recusado')">✕ Não Concordo</button>
+                <button class="btn btn-yellow" onclick="abrirCaixaNegociacao()">⇄ Negociar Proposta</button>
+            </div>
+
+            <div class="negotiation-box" id="negotiation-panel">
+                <p style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Sua Proposta de Valor:</p>
+                <input type="number" id="counter-value" placeholder="Ex: 65000">
+                <p style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Considerações / Justificativa:</p>
+                <textarea id="counter-text" rows="3" placeholder="Digite aqui as observações de desconto..."></textarea>
+                <button class="btn btn-primary" onclick="enviarContraproposta()">Enviar Proposta ao Executor</button>
+            </div>
+        </div>
+
+        <div class="admin-zone" id="admin-panel">
+            <div class="admin-title">
+                <span>PAINEL DO EXECUTOR (ADMIN)</span>
+                <span class="badge-role">Empresa Proprietária</span>
+            </div>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Altere o valor abaixo para atualizar o orçamento que o cliente visualiza.</p>
+            <input type="number" id="admin-new-value" placeholder="Novo Valor da Obra (Ex: 72000)" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <button class="btn btn-primary" style="background: #475569;" onclick="adminAtualizarValor()">Atualizar Proposta no App</button>
         </div>
     </div>
 
     <script>
-        const loginBlock = document.getElementById('loginBlock');
-        const appBlock = document.getElementById('appBlock');
-        const errorMsg = document.getElementById('loginError');
-        const btnLogin = document.getElementById('btnLoginAction');
-        const btnsLogout = document.querySelectorAll('.btnLogoutAction');
-        const formLogin = document.getElementById('formLoginMobile');
+        // CONFIGURAÇÕES DE LOGIN - Ajuste as credenciais aqui se desejar
+        const CREDENCIAIS = {
+            cliente: { usuario: "cliente", senha: "123" },
+            empresa: { usuario: "admin", senha: "coppi2026" }
+        };
 
-        let valorOcultado = true;
-        const valorReal = "R$ 70.000,00";
-        const valorMascarado = "R$ ••••••••••";
+        const WHATSAPP_CONTATO = "5547999999999"; // Seu WhatsApp com DDD
+
+        let dadosProjeto = JSON.parse(localStorage.getItem('coppi_projeto')) || {
+            valor: 75000.00,
+            status: 'Pendente',
+            contrapropostaValor: '',
+            contrapropostaTexto: ''
+        };
+
+        let perfilLogado = localStorage.getItem('coppi_perfil') || null;
 
         function executarLogin() {
-            const codigo = document.getElementById('codigoObra').value.trim();
-            const senha = document.getElementById('senhaObra').value.trim();
+            const u = document.getElementById('user-input').value;
+            const s = document.getElementById('pass-input').value;
 
-            if (codigo === "CO-2026" && senha === "123456") {
-                loginBlock.style.display = 'none';
-                appBlock.style.display = 'flex';
-                errorMsg.style.display = 'none';
-                window.scrollTo(0, 0);
+            if (u === CREDENCIAIS.cliente.usuario && s === CREDENCIAIS.cliente.senha) {
+                perfilLogado = "cliente";
+            } else if (u === CREDENCIAIS.empresa.usuario && s === CREDENCIAIS.empresa.senha) {
+                perfilLogado = "empresa";
             } else {
-                errorMsg.style.display = 'block';
+                alert("Usuário ou senha incorretos!");
+                return;
             }
+
+            localStorage.setItem('coppi_perfil', perfilLogado);
+            checarSessao();
         }
 
-        formLogin.addEventListener('submit', function(e) {
-            e.preventDefault();
-            executarLogin();
-        });
-        btnLogin.addEventListener('click', executarLogin);
+        function executarLogout() {
+            localStorage.removeItem('coppi_perfil');
+            perfilLogado = null;
+            document.getElementById('app-block').style.display = "none";
+            document.getElementById('login-block').style.display = "flex";
+            document.getElementById('user-input').value = '';
+            document.getElementById('pass-input').value = '';
+        }
 
-        btnsLogout.forEach(btn => {
-            btn.addEventListener('click', function() {
-                appBlock.style.display = 'none';
-                loginBlock.style.display = 'flex';
-                document.getElementById('senhaObra').value = '';
-            });
-        });
-
-        function toggleOrcamento() {
-            const txtOrcamento = document.getElementById('orcamentoTexto');
-            const btnOlho = document.getElementById('btnToggleValue');
-            
-            if (valorOcultado) {
-                txtOrcamento.textContent = valorReal;
-                btnOlho.textContent = "🙈";
-                valorOcultado = false;
+        function checarSessao() {
+            if (perfilLogado) {
+                document.getElementById('login-block').style.display = "none";
+                document.getElementById('app-block').style.display = "block";
+                
+                // Distribuição de permissões baseada no perfil logado
+                if (perfilLogado === "empresa") {
+                    document.getElementById('admin-panel').style.display = "block"; // Mostra painel empresa
+                    document.getElementById('client-actions').style.display = "none"; // Esconde botões cliente
+                } else {
+                    document.getElementById('admin-panel').style.display = "none"; // Esconde painel empresa
+                    document.getElementById('client-actions').style.display = "flex"; // Mostra botões cliente
+                }
+                renderizarApp();
             } else {
-                txtOrcamento.textContent = valorMascarado;
-                btnOlho.textContent = "👁️";
-                valorOcultado = true;
+                document.getElementById('login-block').style.display = "flex";
+                document.getElementById('app-block').style.display = "none";
             }
         }
 
-        const todosBotoesAbas = document.querySelectorAll('.nav-btn, .mobile-tab-btn');
-        const todosPaineis = document.querySelectorAll('.tab-panel');
-
-        todosBotoesAbas.forEach(botao => {
-            botao.addEventListener('click', function() {
-                const alvoId = this.getAttribute('data-target');
-                todosBotoesAbas.forEach(b => b.classList.remove('active'));
-                todosPaineis.forEach(p => p.classList.remove('active'));
-
-                document.querySelectorAll(`[data-target="${alvoId}"]`).forEach(b => b.classList.add('active'));
-                document.getElementById(alvoId).classList.add('active');
-                window.scrollTo({ top: 0, behavior: 'instant' });
-            });
-        });
-
-        const btnToggleSidebar = document.getElementById('btnToggleSidebar');
-        const sidebarEl = document.getElementById('sidebarEl');
-        
-        btnToggleSidebar.addEventListener('click', function() {
-            sidebarEl.classList.toggle('collapsed');
-        });
-
-        const lightboxModal = document.getElementById('globalLightbox');
-        const lightboxImg = document.getElementById('lightboxTargetImg');
-        const lightboxCaption = document.getElementById('lightboxTargetCaption');
-
-        function abrirLightbox(titulo, url) {
-            lightboxImg.src = url;
-            lightboxCaption.textContent = titulo;
-            lightboxModal.classList.add('active');
-        }
-
-        function fecharLightbox() {
-            lightboxModal.classList.remove('active');
-        }
-
-        function abrirStory(titulo, url) {
-            abrirLightbox("[STORY CIVIL - VÁLIDO POR 24H] \n" + titulo, url);
-        }
-
-        function salvarOptIn() {
-            const emailInput = document.getElementById('userEmailOptIn');
-            const feedbackMsg = document.getElementById('optInAlert');
+        function renderizarApp() {
+            document.getElementById('display-value').innerText = dadosProjeto.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const badge = document.getElementById('display-status');
+            const actions = document.getElementById('client-actions');
             
-            if(emailInput.value.trim() !== "") {
-                feedbackMsg.style.display = "block";
-                emailInput.value = "";
-                setTimeout(() => { feedbackMsg.style.display = "none"; }, 4000);
+            if(dadosProjeto.status === 'Pendente') {
+                badge.className = "status-badge status-pendente";
+                badge.innerText = "Aguardando Análise do Cliente";
+                if(perfilLogado === "cliente") actions.style.display = "flex";
+            } else if(dadosProjeto.status === 'Aceito') {
+                badge.className = "status-badge status-aceito";
+                badge.innerText = "✓ Proposta Aceita pelo Cliente";
+                actions.style.display = "none";
+            } else if(dadosProjeto.status === 'Recusado') {
+                badge.className = "status-badge status-recusado";
+                badge.innerText = "✕ Proposta Não Aceita";
+                if(perfilLogado === "cliente") actions.style.display = "flex";
+            } else if(dadosProjeto.status === 'Contraproposta') {
+                badge.className = "status-badge status-contraproposta";
+                badge.innerText = `⇄ Contraproposta de ${Number(dadosProjeto.contrapropostaValor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} enviada`;
+                if(perfilLogado === "cliente") actions.style.display = "flex";
             }
         }
+
+        function responderProposta(statusDigitado) {
+            dadosProjeto.status = statusDigitado;
+            localStorage.setItem('coppi_projeto', JSON.stringify(dadosProjeto));
+            renderizarApp();
+
+            let textoWhats = `*Portal COPPI* \nO cliente respondeu à proposta financeira de valor ${document.getElementById('display-value').innerText}.\nStatus: *${statusDigitado.toUpperCase()}*`;
+            window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_CONTATO}&text=${encodeURIComponent(textoWhats)}`, '_blank');
+        }
+
+        function abrirCaixaNegociacao() {
+            document.getElementById('negotiation-panel').style.display = "block";
+        }
+
+        function enviarContraproposta() {
+            const valorSugerido = document.getElementById('counter-value').value;
+            const textoSugerido = document.getElementById('counter-text').value;
+
+            if(!valorSugerido) {
+                alert("Por favor, preencha o valor que deseja propor.");
+                return;
+            }
+
+            dadosProjeto.status = 'Contraproposta';
+            dadosProjeto.contrapropostaValor = valorSugerido;
+            dadosProjeto.contrapropostaTexto = textoSugerido;
+            
+            localStorage.setItem('coppi_projeto', JSON.stringify(dadosProjeto));
+            renderizarApp();
+            document.getElementById('negotiation-panel').style.display = "none";
+
+            let textoWhats = `*Portal COPPI - Nova Negociação* \nO cliente enviou uma contraproposta.\nValor sugerido: *R$ ${valorSugerido}*\nJustificativa: ${textoSugerido}`;
+            window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_CONTATO}&text=${encodeURIComponent(textoWhats)}`, '_blank');
+        }
+
+        function adminAtualizarValor() {
+            const novoValor = document.getElementById('admin-new-value').value;
+            if(!novoValor) {
+                alert("Digite um valor válido para alterar.");
+                return;
+            }
+
+            dadosProjeto.valor = parseFloat(novoValor);
+            dadosProjeto.status = 'Pendente'; 
+            dadosProjeto.contrapropostaValor = '';
+            dadosProjeto.contrapropostaTexto = '';
+
+            localStorage.setItem('coppi_projeto', JSON.stringify(dadosProjeto));
+            renderizarApp();
+            document.getElementById('admin-new-value').value = '';
+            alert("Sucesso! O valor foi atualizado e a proposta voltou ao status pendente para o cliente.");
+        }
+
+        // Executa a checagem ao abrir a página
+        checarSessao();
     </script>
 </body>
 </html>
