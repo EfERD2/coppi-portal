@@ -20,62 +20,6 @@ body {
     padding: 15px; 
 }
 
-/* TELA DE LOGIN INTERATIVA */
-.login-screen { 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 90vh; 
-    padding: 20px; 
-}
-
-.login-card { 
-    background: white; 
-    border-radius: 12px; 
-    padding: 28px; 
-    width: 100%; 
-    max-width: 360px; 
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
-    border: 1px solid #e2e8f0; 
-}
-
-.login-card h2 { 
-    font-size: 22px; 
-    font-weight: 700; 
-    margin-bottom: 6px; 
-    text-align: center; 
-    color: var(--primary); 
-    letter-spacing: -0.5px; 
-}
-
-.login-card p { 
-    font-size: 13px; 
-    color: #64748b; 
-    text-align: center; 
-    margin-bottom: 24px; 
-}
-
-.login-field { 
-    width: 100%; 
-    padding: 12px 14px; 
-    margin-bottom: 14px; 
-    border: 1px solid #cbd5e1; 
-    border-radius: 8px; 
-    font-size: 14px; 
-    outline: none; 
-    transition: border 0.2s; 
-}
-
-.login-field:focus { 
-    border-color: var(--primary); 
-}
-
-/* CONTEÚDO DO APLICATIVO */
-.app-content { 
-    display: none; 
-}
-
 .header { 
     background: var(--primary); 
     color: white; 
@@ -83,7 +27,6 @@ body {
     border-radius: 12px; 
     margin-bottom: 20px; 
     text-align: center; 
-    position: relative; 
 }
 
 .header h1 { 
@@ -98,25 +41,6 @@ body {
     margin-top: 5px; 
 }
 
-.logout-btn { 
-    position: absolute; 
-    top: 18px; 
-    right: 15px; 
-    background: rgba(255,255,255,0.15); 
-    color: white; 
-    border: none; 
-    padding: 5px 10px; 
-    border-radius: 6px; 
-    font-size: 11px; 
-    font-weight: 600; 
-    cursor: pointer; 
-    transition: background 0.2s; 
-}
-
-.logout-btn:hover { 
-    background: rgba(255,255,255,0.25); 
-}
-
 .section-title { 
     font-size: 13px; 
     font-weight: 700; 
@@ -126,7 +50,7 @@ body {
     letter-spacing: 0.5px; 
 }
 
-/* GRID E CARDS DAS FOTOS COMPLETAS */
+/* GRID E CARDS DAS FOTOS */
 .photo-grid { 
     display: flex; 
     flex-direction: column; 
@@ -163,7 +87,7 @@ body {
     line-height: 1.4; 
 }
 
-/* SEÇÃO DE VALORES E BOTÕES COM FEEDBACK TÁTIL */
+/* VALORES E BOTÕES */
 .proposal-value { 
     font-size: 32px; 
     font-weight: 700; 
@@ -188,7 +112,7 @@ body {
 .status-contraproposta { background: #ffedd5; color: #7c2d12; }
 
 .btn-group { 
-    display: none; 
+    display: flex; 
     flex-direction: column; 
     gap: 10px; 
     margin-top: 15px; 
@@ -209,7 +133,6 @@ body {
     transition: all 0.2s ease; 
 }
 
-/* Efeito tátil de afundar o botão no clique (UX Premium) */
 .btn:active {
     transform: scale(0.96);
 }
@@ -222,7 +145,6 @@ body {
 .btn-yellow:hover { background: #ca8a04; }
 .btn-primary { background: var(--primary); }
 
-/* Animação suave para caixas suspensas */
 .negotiation-box { 
     display: none; 
     margin-top: 15px; 
@@ -243,14 +165,27 @@ body {
     outline: none; 
 }
 
-/* PAINEL EXCLUSIVO ADMIN (ZONA TRACEJADA) */
+/* CHAVE DISCRETA DO ADMIN NO RODAPÉ */
+.footer-area {
+    text-align: center;
+    margin: 50px 0 20px 0;
+}
+
+.btn-secret {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 11px;
+    cursor: pointer;
+}
+
 .admin-zone { 
     display: none; 
     background: #f8fafc; 
     border: 2px dashed #cbd5e1; 
     padding: 16px; 
     border-radius: 12px; 
-    margin-top: 30px; 
+    margin-top: 20px; 
 }
 
 .admin-title { 
@@ -258,16 +193,6 @@ body {
     font-weight: 700; 
     color: #475569; 
     margin-bottom: 12px; 
-    display: flex; 
-    justify-content: space-between; 
-}
-
-.badge-role { 
-    background: #cbd5e1; 
-    color: var(--primary); 
-    padding: 2px 8px; 
-    border-radius: 4px; 
-    font-size: 10px; 
 }
 
 @keyframes fadeIn {

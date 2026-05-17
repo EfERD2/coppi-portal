@@ -1,150 +1,94 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal COPPI - Engenharia Estrutural</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+const WHATSAPP_CONTATO = "5547999999999"; // Configure seu WhatsApp aqui
 
-    <div class="login-screen" id="login-block">
-        <div class="login-card">
-            <h2>Portal COPPI</h2>
-            <p>Acesse com suas credenciais exclusivas</p>
-            <input type="text" id="user-input" class="login-field" placeholder="Usuário">
-            <input type="password" id="pass-input" class="login-field" placeholder="Senha">
-            <button class="btn btn-primary" onclick="executarLogin()">Acessar Painel</button>
-        </div>
-    </div>
+let dadosProjeto = JSON.parse(localStorage.getItem('coppi_projeto')) || {
+    valor: 75000.00,
+    status: 'Pendente',
+    contrapropostaValor: '',
+    contrapropostaTexto: ''
+};
 
-    <div class="app-content" id="app-block">
-        <div class="header">
-            <button class="logout-btn" onclick="executarLogout()">Sair</button>
-            <h1>Portal COPPI</h1>
-            <p>Acompanhamento Técnico & Proposta Estrutural</p>
-        </div>
+function renderizarApp() {
+    document.getElementById('display-value').innerText = dadosProjeto.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const badge = document.getElementById('display-status');
+    
+    if(dadosProjeto.status === 'Pendente') {
+        badge.className = "status-badge status-pendente";
+        badge.innerText = "Aguardando Análise do Cliente";
+    } else if(dadosProjeto.status === 'Aceito') {
+        badge.className = "status-badge status-aceito";
+        badge.innerText = "✓ Proposta Aceita pelo Cliente";
+    } else if(dadosProjeto.status === 'Recusado') {
+        badge.className = "status-badge status-recusado";
+        badge.innerText = "✕ Proposta Não Aceita";
+    } else if(dadosProjeto.status === 'Contraproposta') {
+        badge.className = "status-badge status-contraproposta";
+        badge.innerText = `⇄ Contraproposta de ${Number(dadosProjeto.contrapropostaValor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} enviada`;
+    }
+}
 
-        <div class="section-title">Evidências Técnicas (Fotos da Obra)</div>
+function responderProposta(statusDigitado) {
+    dadosProjeto.status = statusDigitado;
+    localStorage.setItem('coppi_projeto', JSON.stringify(dadosProjeto));
+    renderizarApp();
 
-        <div class="photo-grid">
-            <div class="card">
-                <img class="card-img" src="img/fachadaexternaacessoandaime.jpeg" alt="Fachada Externa" loading="lazy">
-                <h3>Fachada Externa</h3>
-                <p>Estrutura de acesso e andaimes montada para execução técnica periférica.</p>
-            </div>
+    let textoWhats = `*Portal COPPI* \nO cliente respondeu à proposta financeira de valor ${document.getElementById('display-value').innerText}.\nStatus: *${statusDigitado.toUpperCase()}*`;
+    window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_CONTATO}&text=${encodeURIComponent(textoWhats)}`, '_blank');
+}
 
-            <div class="card">
-                <img class="card-img" src="img/fundodeviga.jpeg" alt="Fundo de Viga" loading="lazy">
-                <h3>Fundo de Viga</h3>
-                <p>Análise de conformidade e escoramento estrutural de base.</p>
-            </div>
+function abrirCaixaNegociacao() {
+    document.getElementById('negotiation-panel').style.display = "block";
+}
 
-            <div class="card">
-                <img class="card-img" src="img/paredeinternaA.jpeg" alt="Parede Interna A" loading="lazy">
-                <h3>Parede Interna A</h3>
-                <p>Mapeamento de fissuras e preparação de superfície para tratamento.</p>
-            </div>
+function enviarContraproposta() {
+    const valorSugerido = document.getElementById('counter-value').value;
+    const textoSugerido = document.getElementById('counter-text').value;
 
-            <div class="card">
-                <img class="card-img" src="img/paredeinternaB.jpeg" alt="Parede Interna B" loading="lazy">
-                <h3>Parede Interna B</h3>
-                <p>Injeção técnica concluída com sucesso nas amarrações estruturais.</p>
-            </div>
+    if(!valorSugerido) {
+        alert("Por favor, preencha o valor que deseja propor.");
+        return;
+    }
 
-            <div class="card">
-                <img class="card-img" src="img/pilarA.jpeg" alt="Pilar A" loading="lazy">
-                <h3>Pilar Estrutural A</h3>
-                <p>Inspeção de prumo e integridade do concreto armado.</p>
-            </div>
+    dadosProjeto.status = 'Contraproposta';
+    dadosProjeto.contrapropostaValor = valorSugerido;
+    dadosProjeto.contrapropostaTexto = textoSugerido;
+    
+    localStorage.setItem('coppi_projeto', JSON.stringify(dadosProjeto));
+    renderizarApp();
+    document.getElementById('negotiation-panel').style.display = "none";
 
-            <div class="card">
-                <img class="card-img" src="img/pilarinternoB.jpeg" alt="Pilar Interno B" loading="lazy">
-                <h3>Pilar Interno B</h3>
-                <p>Extensão linear de 2,75 metros. Ponto de recomposição estrutural direta com polímeros grauteados de alto prumo.</p>
-            </div>
+    let textoWhats = `*Portal COPPI - Nova Negociação* \nO cliente enviou uma contraproposta.\nValor sugerido: *R$ ${valorSugerido}*\nJustificativa: ${textoSugerido}`;
+    window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_CONTATO}&text=${encodeURIComponent(textoWhats)}`, '_blank');
+}
 
-            <div class="card">
-                <img class="card-img" src="img/portão232.jpeg" alt="Portão 232" loading="lazy">
-                <h3>Acesso Portão 232</h3>
-                <p>Logística de insumos e isolamento de área técnica operacional.</p>
-            </div>
+// CHAVE MÁGICA: Abre seu painel de valores de forma discreta por comando de senha
+function acessarPainelAdmin() {
+    const senha = prompt("Digite a senha mestre de engenharia:");
+    if (senha === "coppi2026") {
+        document.getElementById('admin-panel').style.display = "block";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } else {
+        alert("Acesso negado.");
+    }
+}
 
-            <div class="card">
-                <img class="card-img" src="img/portão350.jpeg" alt="Portão 350" loading="lazy">
-                <h3>Acesso Portão 350</h3>
-                <p>Área de descarga e fluxo de resíduos controlados.</p>
-            </div>
+function adminAtualizarValor() {
+    const novoValor = document.getElementById('admin-new-value').value;
+    if(!novoValor) {
+        alert("Digite um valor válido.");
+        return;
+    }
 
-            <div class="card">
-                <img class="card-img" src="img/tirardrenorua.jpeg" alt="Dreno" loading="lazy">
-                <h3>Remoção de Dreno</h3>
-                <p>Desvio técnico de fluxo hidráulico urbano para proteção de fundação.</p>
-            </div>
+    dadosProjeto.valor = parseFloat(novoValor);
+    dadosProjeto.status = 'Pendente'; 
+    dadosProjeto.contrapropostaValor = '';
+    dadosProjeto.contrapropostaTexto = '';
 
-            <div class="card">
-                <img class="card-img" src="img/vigainternaC.jpeg" alt="Viga C" loading="lazy">
-                <h3>Viga Interna C (1,00m)</h3>
-                <p>Tratamento de armadura exposta e recomposição de cobrimento.</p>
-            </div>
+    localStorage.setItem('coppi_projeto', JSON.stringify(dadosProjeto));
+    renderizarApp();
+    document.getElementById('admin-new-value').value = '';
+    document.getElementById('admin-panel').style.display = "none";
+    alert("Orçamento atualizado com sucesso!");
+}
 
-            <div class="card">
-                <img class="card-img" src="img/vigainternaD.jpeg" alt="Viga D" loading="lazy">
-                <h3>Viga Interna D (3,80m)</h3>
-                <p>Mapeamento F-10. Detalhe técnico de cura e escoramento concluídos.</p>
-            </div>
-
-            <div class="card">
-                <img class="card-img" src="img/vigainternaE.jpeg" alt="Viga E" loading="lazy">
-                <h3>Viga Interna E (1,00m)</h3>
-                <p>Recuperação de integridade estrutural em nó de viga-pilar.</p>
-            </div>
-
-            <div class="card">
-                <img class="card-img" src="img/vigainternaF.jpeg" alt="Viga F" loading="lazy">
-                <h3>Viga Interna F (6,00m)</h3>
-                <p>Reforço com argamassa polimérica de alta resistência mecânica.</p>
-            </div>
-        </div>
-
-        <div class="section-title">Valores & Proposta Comercial</div>
-        <div class="card">
-            <h3>Resumo Financeiro do Projeto</h3>
-            <p>Investimento total estimado para execução técnica, insumos e engenharia dedicada:</p>
-            
-            <span class="proposal-value" id="display-value">R$ 0,00</span>
-            
-            <div id="status-container">
-                <span class="status-badge status-pendente" id="display-status">Aguardando Análise do Cliente</span>
-            </div>
-
-            <div class="btn-group" id="client-actions">
-                <button class="btn btn-green" onclick="responderProposta('Aceito')">✓ Concordo</button>
-                <button class="btn btn-red" onclick="responderProposta('Recusado')">✕ Não Concordo</button>
-                <button class="btn btn-yellow" onclick="abrirCaixaNegociacao()">⇄ Negociar Proposta</button>
-            </div>
-
-            <div class="negotiation-box" id="negotiation-panel">
-                <p style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Sua Proposta de Valor:</p>
-                <input type="number" id="counter-value" placeholder="Ex: 65000">
-                <p style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Considerações / Justificativa:</p>
-                <textarea id="counter-text" rows="3" placeholder="Digite aqui as observações de desconto..."></textarea>
-                <button class="btn btn-primary" onclick="enviarContraproposta()">Enviar Proposta ao Executor</button>
-            </div>
-        </div>
-
-        <div class="admin-zone" id="admin-panel">
-            <div class="admin-title">
-                <span>PAINEL DO EXECUTOR (ADMIN)</span>
-                <span class="badge-role">Empresa Proprietária</span>
-            </div>
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Altere o valor abaixo para atualizar o orçamento que o cliente visualiza.</p>
-            <input type="number" id="admin-new-value" placeholder="Novo Valor da Obra (Ex: 72000)" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-            <button class="btn btn-primary" style="background: #475569;" onclick="adminAtualizarValor()">Atualizar Proposta no App</button>
-        </div>
-    </div>
-
-    <script src="js/app.js"></script>
-</body>
-</html>
+// Inicializa a renderização direta do portal
+renderizarApp();
